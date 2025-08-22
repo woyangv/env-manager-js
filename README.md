@@ -309,10 +309,10 @@ envManager.switchEnv = function(env) {
 
 ## 📄 许可证
 
-[MIT](LICENSE) © liyang1057
+[MIT](LICENSE) © woyangv
 
 ## 🔗 相关链接
 
-- [GitHub Repository](https://github.com/liyang1057/env-manager-js)
+- [GitHub Repository](https://github.com/woyangv/env-manager-js)
 - [npm Package](https://www.npmjs.com/package/env-manager-js)
-- [Issues](https://github.com/liyang1057/env-manager-js/issues)
+- [Issues](https://github.com/woyangv/env-manager-js/issues)

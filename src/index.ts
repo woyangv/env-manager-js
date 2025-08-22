@@ -1,6 +1,6 @@
 /**
  * @description: 环境管理工具包 - npm包版本
- * @author: liyang1057
+ * @author: woyangv
  * @version: 1.0.0
  * @license: MIT
  */
