@@ -15,9 +15,9 @@
     "dev": "rollup -c -w",
     "test": "jest",
     "test:watch": "jest --watch",
-    "lint": "eslint src --ext .js,.ts",
-    "lint:fix": "eslint src --ext .js,.ts --fix",
-    "prepublishOnly": "npm run build",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    
     "release": "npm run build && npm publish"
   },
   "keywords": [
@@ -39,24 +39,27 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/liyang1057/env-manager-js.git"
+    "url": "https://github.com/woyangv/env-manager-js.git"
   },
   "bugs": {
-    "url": "https://github.com/liyang1057/env-manager-js/issues"
+    "url": "https://github.com/woyangv/env-manager-js/issues"
   },
-  "homepage": "https://github.com/liyang1057/env-manager-js#readme",
+  "homepage": "https://github.com/woyangv/env-manager-js#readme",
   "devDependencies": {
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.4",
     "@types/jest": "^29.5.5",
+    "@types/minimatch": "^6.0.0",
     "eslint": "^8.50.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "rollup": "^2.79.1",
-    "typescript": "^5.2.2"
+    "rollup-plugin-copy": "^3.5.0",
+    "typescript": "^5.9.2"
   },
   "engines": {
     "node": ">=14.0.0"

@@ -1,4 +1,4 @@
-const { createEnvManager } = require('../src/index');
+const { createEnvManager } = require('../dist/index');
 
 // Mock配置
 const mockConfig = {

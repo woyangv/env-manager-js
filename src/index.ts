@@ -6,11 +6,105 @@
  */
 
 /**
- * @description: 获取URL参数的工具函数
- * @param {string} name 参数名
- * @returns {string|null} 参数值
+ * 环境配置映射类型
  */
-function getUrlParam(name) {
+export interface EnvConfig {
+  [key: string]: string;
+}
+
+/**
+ * 环境管理器配置选项
+ */
+export interface EnvManagerConfig {
+  /** 环境配置映射对象 */
+  envConfig?: EnvConfig;
+  /** 生产域名列表，默认 [] */
+  productionDomains?: string[];
+  /** URL参数名，默认 'apiSwitch' */
+  paramName?: string;
+  /** localStorage键名，默认与paramName相同 */
+  storageKey?: string;
+  /** 默认环境，默认 'pre' */
+  defaultEnv?: string;
+  /** 生产环境名称，默认 'prod' */
+  productionEnv?: string;
+  /** 是否在非生产域名显示URL参数，默认 true */
+  showUrlParams?: boolean;
+  /** URL同步延时(ms)，默认 100 */
+  syncDelay?: number;
+  /** 是否启用控制台日志，默认 true */
+  enableLog?: boolean;
+}
+
+/**
+ * 动态配置对象类型
+ */
+export interface DynamicConfig {
+  /** 当前环境的API基础URL */
+  readonly url: string;
+}
+
+/**
+ * 环境管理器接口
+ */
+export interface EnvManager {
+  /**
+   * 获取当前环境
+   * @returns 当前环境名称
+   */
+  getCurrentEnv(): string;
+
+  /**
+   * 获取当前环境的配置
+   * @param key 配置项的键名，如果不传则返回整个配置对象
+   * @returns 配置值或配置对象
+   */
+  getConfig(key?: string): any;
+
+  /**
+   * 判断是否是生产环境
+   * @returns 是否生产环境
+   */
+  isProduction(): boolean;
+
+  /**
+   * 判断是否是生产域名
+   * @returns 是否生产域名
+   */
+  isProductionDomain(): boolean;
+
+  /**
+   * 手动切换环境
+   * @param env 目标环境名称
+   * @returns 切换是否成功
+   */
+  switchEnv(env: string): boolean;
+
+  /**
+   * 获取所有可用环境
+   * @returns 环境名称数组
+   */
+  getAvailableEnvs(): string[];
+
+  /**
+   * 创建动态配置对象
+   * @returns 动态配置对象
+   */
+  createConfig(): DynamicConfig;
+
+  /**
+   * 同步URL参数
+   * @param env 环境名称
+   */
+  syncUrlParams(env: string): void;
+}
+
+/**
+ * @description: 获取URL参数的工具函数
+ * @param name 参数名
+ * @returns 参数值
+ */
+function getUrlParam(name: string): string | null {
   if (typeof window === 'undefined') return null;
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(name);
@@ -18,19 +112,10 @@ function getUrlParam(name) {
 
 /**
  * @description: 创建环境管理器
- * @param {Object} config 配置对象
- * @param {Object} config.envConfig 环境配置映射对象
- * @param {string[]} config.productionDomains 生产域名列表，默认 []
- * @param {string} config.paramName URL参数名，默认 'apiSwitch'
- * @param {string} config.storageKey localStorage键名，默认与paramName相同
- * @param {string} config.defaultEnv 默认环境，默认 'pre'
- * @param {string} config.productionEnv 生产环境名称，默认 'prod'
- * @param {boolean} config.showUrlParams 是否在非生产域名显示URL参数，默认 true
- * @param {number} config.syncDelay URL同步延时(ms)，默认 100
- * @param {boolean} config.enableLog 是否启用控制台日志，默认 true
- * @returns {Object} 环境管理器对象
+ * @param config 配置对象
+ * @returns 环境管理器对象
  */
-function createEnvManager(config = {}) {
+function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
   // 解构配置参数
   const {
     envConfig = {},
@@ -46,9 +131,9 @@ function createEnvManager(config = {}) {
 
   /**
    * @description: 判断是否是生产域名
-   * @returns {boolean} 是否生产域名
+   * @returns 是否生产域名
    */
-  function isProductionDomain() {
+  function isProductionDomain(): boolean {
     if (typeof window === 'undefined') return false;
     return productionDomains.includes(window.location.hostname);
   }
@@ -59,9 +144,9 @@ function createEnvManager(config = {}) {
    * 1. 首先根据域名确定默认环境
    * 2. localStorage 覆盖默认环境
    * 3. URL参数优先级最高，覆盖所有
-   * @returns {string} 当前环境名称
+   * @returns 当前环境名称
    */
-  function getCurrentEnv() {
+  function getCurrentEnv(): string {
     if (typeof window === 'undefined') return defaultEnv;
 
     // 1. 首先根据域名确定默认环境
@@ -93,28 +178,28 @@ function createEnvManager(config = {}) {
 
   /**
    * @description: 同步URL参数
-   * @param {string} env 环境名称
+   * @param env 环境名称
    */
-  function syncUrlParams(env) {
+  function syncUrlParams(env: string): void {
     if (typeof window === 'undefined' || !showUrlParams) return;
 
     // 只有非生产域名才在URL上显示参数，生产域名保持干净
     if (!isProductionDomain()) {
       // 延时同步URL，避免与内部路由跳转冲突
       setTimeout(() => {
-        const currentUrl = new URL(window.location);
+        const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set(paramName, env);
-        window.history.replaceState({}, '', currentUrl);
+        window.history.replaceState({}, '', currentUrl.toString());
       }, syncDelay);
     }
   }
 
   /**
    * @description: 获取当前环境的配置
-   * @param {string} key - 配置项的键名，如果不传则返回整个配置对象
-   * @returns {any} 配置值或配置对象
+   * @param key - 配置项的键名，如果不传则返回整个配置对象
+   * @returns 配置值或配置对象
    */
-  function getConfig(key) {
+  function getConfig(key?: string): any {
     const currentEnv = getCurrentEnv();
 
     // 保存当前环境到localStorage
@@ -131,24 +216,23 @@ function createEnvManager(config = {}) {
     }
 
     // 如果指定了key，返回对应的值；否则返回整个配置对象
-    return key ? config[key] : config;
+    return key ? (config as any)?.[key] : config;
   }
-
 
   /**
    * @description: 判断是否是生产环境
-   * @returns {boolean} 是否生产环境
+   * @returns 是否生产环境
    */
-  function isProduction() {
+  function isProduction(): boolean {
     return getCurrentEnv() === productionEnv;
   }
 
   /**
    * @description: 手动切换环境
-   * @param {string} env 目标环境名称
-   * @returns {boolean} 切换是否成功
+   * @param env 目标环境名称
+   * @returns 切换是否成功
    */
-  function switchEnv(env) {
+  function switchEnv(env: string): boolean {
     if (!envConfig[env]) {
       console.warn(`🌍 环境 ${env} 不存在于配置中`);
       return false;
@@ -168,20 +252,20 @@ function createEnvManager(config = {}) {
 
   /**
    * @description: 获取所有可用环境
-   * @returns {string[]} 环境名称数组
+   * @returns 环境名称数组
    */
-  function getAvailableEnvs() {
+  function getAvailableEnvs(): string[] {
     return Object.keys(envConfig);
   }
 
   /**
    * @description: 创建动态配置对象
-   * @returns {Object} 动态配置对象
+   * @returns 动态配置对象
    */
-  function createConfig() {
+  function createConfig(): DynamicConfig {
     return {
-      get url() {
-        return getConfig();
+      get url(): string {
+        return getConfig() as string;
       }
     };
   }

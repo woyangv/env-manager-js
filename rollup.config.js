@@ -1,5 +1,5 @@
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import babel from '@rollup/plugin-babel';
+import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -7,77 +7,59 @@ const isProduction = process.env.NODE_ENV === 'production';
 export default [
   // ES Module build
   {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: {
       file: 'dist/index.esm.js',
       format: 'es',
-      sourcemap: true
+      sourcemap: true,
+      exports: 'named'
     },
     plugins: [
       nodeResolve(),
-      babel({
-        babelHelpers: 'bundled',
-        exclude: 'node_modules/**',
-        presets: [
-          ['@babel/preset-env', {
-            modules: false,
-            targets: {
-              browsers: ['> 1%', 'last 2 versions', 'not dead']
-            }
-          }]
-        ]
+      typescript({
+        declaration: true,
+        declarationDir: 'dist',
+        outDir: 'dist',
+        skipLibCheck: true
       }),
       isProduction && terser()
     ].filter(Boolean)
   },
   // CommonJS build
   {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: {
       file: 'dist/index.js',
       format: 'cjs',
       sourcemap: true,
-      exports: 'auto'
+      exports: 'named'
     },
     plugins: [
       nodeResolve(),
-      babel({
-        babelHelpers: 'bundled',
-        exclude: 'node_modules/**',
-        presets: [
-          ['@babel/preset-env', {
-            modules: false,
-            targets: {
-              node: '14'
-            }
-          }]
-        ]
+      typescript({
+        declaration: false,
+        outDir: 'dist',
+        skipLibCheck: true
       }),
       isProduction && terser()
     ].filter(Boolean)
   },
   // UMD build for browsers
   {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: {
       file: 'dist/index.umd.js',
       format: 'umd',
       name: 'EnvManager',
-      sourcemap: true
+      sourcemap: true,
+      exports: 'named'
     },
     plugins: [
       nodeResolve(),
-      babel({
-        babelHelpers: 'bundled',
-        exclude: 'node_modules/**',
-        presets: [
-          ['@babel/preset-env', {
-            modules: false,
-            targets: {
-              browsers: ['> 1%', 'last 2 versions', 'not dead']
-            }
-          }]
-        ]
+      typescript({
+        declaration: false,
+        outDir: 'dist',
+        skipLibCheck: true
       }),
       isProduction && terser()
     ].filter(Boolean)
