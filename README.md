@@ -48,10 +48,6 @@ const envManager = createEnvManager({
 // 获取当前环境配置
 const config = envManager.getConfig();
 console.log('当前API地址:', config.baseURL);
-
-// 获取当前环境配置
-const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);
 ```
 
 ### TypeScript 使用
@@ -191,9 +187,7 @@ export const envManager = createEnvManager({
   productionDomains: ['example.com']
 });
 
-// 获取当前环境配置
-const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
+export const config = envManager.createConfig();</search>
 </use_search_and_replace>
 
 [Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
@@ -209,11 +203,7 @@ import { config } from './config.js';
 const request = axios.create({
   baseURL: config.url,
   timeout: 10000
-});
-
-// 获取当前环境配置
-const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
+});</search>
 </use_search_and_replace>
 
 [Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
@@ -227,9 +217,9 @@ export default request;
 // 项目A的环境管理
 const projectAEnvManager = createEnvManager({
   envConfig: {
-    local: "//localhost:8080",
-    staging: "//staging-a.company.com",
-    production: "//api-a.company.com"
+    local: { baseURL: "//localhost:8080", timeout: 10000 },
+    staging: { baseURL: "//staging-a.company.com", timeout: 8000 },
+    production: { baseURL: "//api-a.company.com", timeout: 5000 }
   },
   productionDomains: ['app-a.company.com'],
   paramName: 'apiEnv',
@@ -237,9 +227,9 @@ const projectAEnvManager = createEnvManager({
   defaultEnv: 'local'
 });
 
-// 获取当前环境配置
-const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
+// 获取项目A的配置
+const configA = projectAEnvManager.getConfig();
+console.log('项目A API地址:', configA.baseURL);</search>
 </use_search_and_replace>
 
 [Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
@@ -247,9 +237,9 @@ console.log('当前API地址:', config.baseURL);</search>
 // 项目B的环境管理
 const projectBEnvManager = createEnvManager({
   envConfig: {
-    local: "//localhost:9000", 
-    staging: "//staging-b.company.com",
-    production: "//api-b.company.com"
+    local: { baseURL: "//localhost:9000", timeout: 10000 }, 
+    staging: { baseURL: "//staging-b.company.com", timeout: 8000 },
+    production: { baseURL: "//api-b.company.com", timeout: 5000 }
   },
   productionDomains: ['app-b.company.com'],
   paramName: 'bEnv',
@@ -257,9 +247,9 @@ const projectBEnvManager = createEnvManager({
   defaultEnv: 'local'
 });
 
-// 获取当前环境配置
-const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
+// 获取项目B的配置
+const configB = projectBEnvManager.getConfig();
+console.log('项目B API地址:', configB.baseURL);</search>
 </use_search_and_replace>
 
 [Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
@@ -295,13 +285,12 @@ URL参数: ?apiSwitch=dev
 
 ```javascript
 const envManager = createEnvManager({
-  envConfig: { /* ... */ },
+  envConfig: {
+    dev: { baseURL: "//localhost:3000" },
+    prod: { baseURL: "//api.example.com" }
+  },
   enableLog: false, // 关闭默认日志
-});
-
-// 获取当前环境配置
-const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
+});</search>
 </use_search_and_replace>
 
 [Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
@@ -319,12 +308,11 @@ envManager.getConfig = function(key) {
 
 ```javascript
 const envManager = createEnvManager({
-  envConfig: { /* ... */ }
-});
-
-// 获取当前环境配置
-const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
+  envConfig: {
+    dev: { baseURL: "//localhost:3000" },
+    prod: { baseURL: "//api.example.com" }
+  }
+});</search>
 </use_search_and_replace>
 
 [Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
