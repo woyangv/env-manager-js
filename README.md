@@ -104,7 +104,6 @@ const envManager: EnvManager = createEnvManager(config);
 | `isProductionDomain()` | `boolean` | 判断是否是生产域名 |
 | `switchEnv(env)` | `boolean` | 手动切换环境 |
 | `getAvailableEnvs()` | `string[]` | 获取所有可用环境 |
-| `createConfig()` | `DynamicConfig` | 创建动态配置对象 |
 | `syncUrlParams(env)` | `void` | 同步URL参数 |
 
 ## 🎯 使用场景
@@ -127,10 +126,7 @@ const envManager = createEnvManager({
 
 // 获取当前环境配置
 const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
+console.log('当前API地址:', config.baseURL);
 
 // 创建axios实例
 const apiClient = axios.create({
@@ -140,10 +136,7 @@ const apiClient = axios.create({
 
 // 获取当前环境配置
 const config = envManager.getConfig();
-console.log('当前API地址:', config.baseURL);</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
+console.log('当前API地址:', config.baseURL);
 
 function App() {
   const [currentEnv, setCurrentEnv] = useState('');
@@ -187,12 +180,7 @@ export const envManager = createEnvManager({
   productionDomains: ['example.com']
 });
 
-export const config = envManager.createConfig();</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
-
-export const config = envManager.createConfig();
+export const config = envManager.getConfig();
 ```
 
 ```javascript
@@ -203,10 +191,7 @@ import { config } from './config.js';
 const request = axios.create({
   baseURL: config.url,
   timeout: 10000
-});</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
+});
 
 export default request;
 ```
@@ -229,10 +214,7 @@ const projectAEnvManager = createEnvManager({
 
 // 获取项目A的配置
 const configA = projectAEnvManager.getConfig();
-console.log('项目A API地址:', configA.baseURL);</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
+console.log('项目A API地址:', configA.baseURL);
 
 // 项目B的环境管理
 const projectBEnvManager = createEnvManager({
@@ -249,10 +231,7 @@ const projectBEnvManager = createEnvManager({
 
 // 获取项目B的配置
 const configB = projectBEnvManager.getConfig();
-console.log('项目B API地址:', configB.baseURL);</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
+console.log('项目B API地址:', configB.baseURL);
 ```
 
 ## 🔄 环境切换逻辑
@@ -290,10 +269,7 @@ const envManager = createEnvManager({
     prod: { baseURL: "//api.example.com" }
   },
   enableLog: false, // 关闭默认日志
-});</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
+});
 
 // 自定义日志处理
 const originalGetConfig = envManager.getConfig;
@@ -312,10 +288,7 @@ const envManager = createEnvManager({
     dev: { baseURL: "//localhost:3000" },
     prod: { baseURL: "//api.example.com" }
   }
-});</search>
-</use_search_and_replace>
-
-[Response interrupted by a tool use result. Only one tool may be used at a time and should be placed at the end of the message.]
+});
 
 // 监听环境切换
 const originalSwitchEnv = envManager.switchEnv;

@@ -133,16 +133,6 @@ describe('EnvManager', () => {
     });
   });
 
-  describe('createConfig', () => {
-    test('应该创建配置对象', () => {
-      const config = envManager.createConfig();
-      expect(typeof config).toBe('object');
-      expect(config).toHaveProperty('url');
-      expect(typeof config.url).toBe('object');
-      expect(config.url).toHaveProperty('baseURL');
-    });
-  });
-
   describe('SSR兼容性', () => {
     test('应该在服务端环境正常工作', () => {
       delete global.window;

@@ -36,13 +36,6 @@ export interface EnvManagerConfig {
   enableLog?: boolean;
 }
 
-/**
- * 动态配置对象类型
- */
-export interface DynamicConfig {
-  /** 当前环境的API基础URL */
-  readonly url: string;
-}
 
 /**
  * 环境管理器接口
@@ -85,12 +78,6 @@ export interface EnvManager {
    * @returns 环境名称数组
    */
   getAvailableEnvs(): string[];
-
-  /**
-   * 创建动态配置对象
-   * @returns 动态配置对象
-   */
-  createConfig(): DynamicConfig;
 
   /**
    * 同步URL参数
@@ -258,18 +245,6 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
     return Object.keys(envConfig);
   }
 
-  /**
-   * @description: 创建动态配置对象
-   * @returns 动态配置对象
-   */
-  function createConfig(): DynamicConfig {
-    return {
-      get url(): string {
-        return getConfig() as string;
-      }
-    };
-  }
-
   // 返回环境管理器对象
   return {
     getCurrentEnv,
@@ -278,7 +253,6 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
     isProductionDomain,
     switchEnv,
     getAvailableEnvs,
-    createConfig,
     syncUrlParams
   };
 }
