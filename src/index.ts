@@ -80,7 +80,7 @@ export interface EnvManager {
   getAvailableEnvs(): string[];
 
   /**
-   * 同步URL参数
+   * 同步URL参数（生产域名的生产环境除外）
    * @param env 环境名称
    */
   syncUrlParams(env: string): void;
@@ -170,8 +170,8 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
   function syncUrlParams(env: string): void {
     if (typeof window === 'undefined' || !showUrlParams) return;
 
-    // 只有非生产域名才在URL上显示参数，生产域名保持干净
-    if (!isProductionDomain()) {
+    // 只有生产域名且生产环境才不显示URL参数，其他情况都显示以便调试
+    if (!(isProductionDomain() && env === productionEnv)) {
       // 延时同步URL，避免与内部路由跳转冲突
       setTimeout(() => {
         const currentUrl = new URL(window.location.href);
