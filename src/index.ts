@@ -6,18 +6,11 @@
  */
 
 /**
- * 环境配置映射类型
- */
-export interface EnvConfig {
-  [key: string]: string;
-}
-
-/**
  * 环境管理器配置选项
  */
 export interface EnvManagerConfig {
   /** 环境配置映射对象 */
-  envConfig?: EnvConfig;
+  envConfig?: Record<string, Record<string, any>>;
   /** 生产域名列表，默认 [] */
   productionDomains?: string[];
   /** URL参数名，默认 'apiSwitch' */
@@ -35,7 +28,6 @@ export interface EnvManagerConfig {
   /** 是否启用控制台日志，默认 true */
   enableLog?: boolean;
 }
-
 
 /**
  * 环境管理器接口
@@ -92,7 +84,7 @@ export interface EnvManager {
  * @returns 参数值
  */
 function getUrlParam(name: string): string | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(name);
 }
@@ -107,13 +99,13 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
   const {
     envConfig = {},
     productionDomains = [],
-    paramName = 'apiSwitch',
+    paramName = "apiSwitch",
     storageKey = paramName,
-    defaultEnv = 'pre',
-    productionEnv = 'prod',
+    defaultEnv = "pre",
+    productionEnv = "prod",
     showUrlParams = true,
     syncDelay = 100,
-    enableLog = true
+    enableLog = true,
   } = config;
 
   /**
@@ -121,7 +113,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
    * @returns 是否生产域名
    */
   function isProductionDomain(): boolean {
-    if (typeof window === 'undefined') return false;
+    if (typeof window === "undefined") return false;
     return productionDomains.includes(window.location.hostname);
   }
 
@@ -134,7 +126,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
    * @returns 当前环境名称
    */
   function getCurrentEnv(): string {
-    if (typeof window === 'undefined') return defaultEnv;
+    if (typeof window === "undefined") return defaultEnv;
 
     // 1. 首先根据域名确定默认环境
     let currentEnv = isProductionDomain() ? productionEnv : defaultEnv;
@@ -168,7 +160,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
    * @param env 环境名称
    */
   function syncUrlParams(env: string): void {
-    if (typeof window === 'undefined' || !showUrlParams) return;
+    if (typeof window === "undefined" || !showUrlParams) return;
 
     // 只有生产域名且生产环境才不显示URL参数，其他情况都显示以便调试
     if (!(isProductionDomain() && env === productionEnv)) {
@@ -176,7 +168,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
       setTimeout(() => {
         const currentUrl = new URL(window.location.href);
         currentUrl.searchParams.set(paramName, env);
-        window.history.replaceState({}, '', currentUrl.toString());
+        window.history.replaceState({}, "", currentUrl.toString());
       }, syncDelay);
     }
   }
@@ -190,7 +182,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
     const currentEnv = getCurrentEnv();
 
     // 保存当前环境到localStorage
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.setItem(storageKey, currentEnv);
     }
 
@@ -225,7 +217,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
       return false;
     }
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.setItem(storageKey, env);
       syncUrlParams(env);
     }
@@ -253,7 +245,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
     isProductionDomain,
     switchEnv,
     getAvailableEnvs,
-    syncUrlParams
+    syncUrlParams,
   };
 }
 
