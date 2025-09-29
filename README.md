@@ -239,24 +239,53 @@ console.log('项目B API地址:', configB.baseURL);
 环境切换按以下优先级顺序执行：
 
 1. **域名默认环境** - 根据当前域名判断默认环境
-2. **localStorage覆盖** - 本地存储的环境选择覆盖默认环境  
+2. **localStorage覆盖** - 本地存储的环境选择覆盖默认环境（生产域名下跳过此步骤）
 3. **URL参数最高优先级** - URL参数中的环境设置覆盖所有其他设置
 
-### 示例
+### 生产域名特殊逻辑 🆕
 
+为了确保生产环境的稳定性和安全性，在生产域名下：
+
+- ❌ **不读取localStorage** - 跳过本地存储的环境覆盖逻辑
+- ❌ **不写入localStorage** - 不会保存环境切换到本地存储
+- ✅ **只允许URL参数切换** - 仅通过URL参数进行临时环境切换
+
+### 示例对比
+
+#### 非生产域名 (localhost:3000)
 ```
-当前域名: app.example.com (生产域名)
-localStorage: test
-URL参数: ?apiSwitch=dev
+域名默认: dev
+localStorage: test  ← 会覆盖默认环境
+URL参数: ?apiSwitch=staging
 
-最终环境: dev (URL参数优先级最高)
+最终环境: staging (URL参数优先级最高)
+```
+
+#### 生产域名 (www.example.com)
+```
+域名默认: prod
+localStorage: test  ← 被忽略，不会覆盖
+URL参数: ?apiSwitch=staging
+
+最终环境: staging (只有URL参数能覆盖)
+```
+
+#### 生产域名无URL参数
+```
+域名默认: prod
+localStorage: test  ← 被忽略
+URL参数: 无
+
+最终环境: prod (始终使用生产环境)
 ```
 
 ## 🛡️ 安全特性
 
-- **生产域名保护** - 在生产域名下不会在URL中显示环境参数，保持URL干净
+- **生产域名localStorage隔离** 🆕 - 生产域名下完全跳过localStorage读写，确保环境纯净
+- **生产域名URL保护** - 在生产域名的生产环境下不显示URL参数，保持URL干净
 - **环境验证** - 只允许切换到配置中存在的环境
 - **SSR兼容** - 在服务端渲染环境中安全降级
+- **状态隔离** - 生产环境与开发环境的状态完全隔离，避免意外污染
 
 ## 🔧 高级配置
 
