@@ -121,7 +121,7 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
    * @description: 获取当前环境
    * 环境切换逻辑：先确定默认环境，再按优先级覆盖
    * 1. 首先根据域名确定默认环境
-   * 2. localStorage 覆盖默认环境
+   * 2. localStorage 覆盖默认环境（生产域名下跳过此步骤）
    * 3. URL参数优先级最高，覆盖所有
    * @returns 当前环境名称
    */
@@ -134,13 +134,17 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
       console.log(`🌍 域名默认环境: ${currentEnv}`);
     }
 
-    // 2. localStorage覆盖默认环境
-    const savedEnv = localStorage.getItem(storageKey);
-    if (savedEnv && envConfig[savedEnv]) {
-      currentEnv = savedEnv;
-      if (enableLog) {
-        console.log(`🌍 localStorage覆盖为: ${savedEnv}环境`);
+    // 2. localStorage覆盖默认环境（生产域名下跳过此步骤）
+    if (!isProductionDomain()) {
+      const savedEnv = localStorage.getItem(storageKey);
+      if (savedEnv && envConfig[savedEnv]) {
+        currentEnv = savedEnv;
+        if (enableLog) {
+          console.log(`🌍 localStorage覆盖为: ${savedEnv}环境`);
+        }
       }
+    } else if (enableLog) {
+      console.log(`🌍 生产域名下跳过localStorage覆盖逻辑`);
     }
 
     // 3. URL参数优先级最高，覆盖所有
@@ -181,8 +185,8 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
   function getConfig(key?: string): any {
     const currentEnv = getCurrentEnv();
 
-    // 保存当前环境到localStorage
-    if (typeof window !== "undefined") {
+    // 保存当前环境到localStorage（生产域名下跳过此步骤）
+    if (typeof window !== "undefined" && !isProductionDomain()) {
       localStorage.setItem(storageKey, currentEnv);
     }
 
@@ -218,7 +222,10 @@ function createEnvManager(config: EnvManagerConfig = {}): EnvManager {
     }
 
     if (typeof window !== "undefined") {
-      localStorage.setItem(storageKey, env);
+      // 生产域名下不写入localStorage，只同步URL参数
+      if (!isProductionDomain()) {
+        localStorage.setItem(storageKey, env);
+      }
       syncUrlParams(env);
     }
 
